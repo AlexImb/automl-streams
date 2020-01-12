@@ -229,12 +229,15 @@ class KafkaStream(Stream):
         self.sample_idx += batch_size
         try:
             i = 0
+            sample = pd.DataFrame()
             for message in self.consumer:
-                sample = pd.read_csv(StringIO(message.value), header=None)
+                row = pd.read_csv(StringIO(message.value), header=None)
                 if any(sample.dtypes == 'object'):
                     print(f'''Streamed sample contains text or malformatted data.
                         Dropping sample: {self.sample_idx - i}''')
+                    continue
 
+                sample = sample.append(row, ignore_index=True)
                 i += 1
                 if (i >= batch_size - 1):
                     break
