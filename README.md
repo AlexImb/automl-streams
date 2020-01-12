@@ -14,7 +14,28 @@ pip install -U automl-streams
 
 or `conda`:
 
+```shell
 conda install automl-streams
+```
+
+# Usage
+
+```py
+from skmultiflow.trees import HoeffdingTree
+from skmultiflow.evaluation import EvaluatePrequential
+from automlstreams.streams import KafkaStream
+
+stream = KafkaStream(topic, bootstrap_servers=broker)
+stream.prepare_for_use()
+ht = HoeffdingTree()
+evaluator = EvaluatePrequential(show_plot=True,
+                                pretrain_size=200,
+                                max_samples=3000)
+
+evaluator.evaluate(stream=stream, model=[ht], model_names=['HT'])
+```
+
+More demonstrations available in the [demo](./demo) directory.
 
 # Development
 
