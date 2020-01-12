@@ -232,8 +232,7 @@ class KafkaStream(Stream):
             for message in self.consumer:
                 sample = pd.read_csv(StringIO(message.value), header=None)
                 if any(sample.dtypes == 'object'):
-                    print(
-                        f'''Streamed sample contains text or malformatted data.
+                    print(f'''Streamed sample contains text or malformatted data.
                         Dropping sample: {self.sample_idx - i}''')
 
                 i += 1
@@ -281,6 +280,8 @@ class KafkaStream(Stream):
 
             if self.n_targets < 2:
                 self.current_sample_y = self.current_sample_y.flatten()
+
+            self.target_values = self._get_target_values()
 
         except IndexError:
             self.current_sample_x = None
