@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from automlstreams.skeleton import fib
+from automlstreams.console import fib
 
 __author__ = "Alexandru-Ionut Imbrea"
 __copyright__ = "Alexandru-Ionut Imbrea"
