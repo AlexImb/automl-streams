@@ -35,7 +35,7 @@ evaluator = EvaluatePrequential(show_plot=True,
 evaluator.evaluate(stream=stream, model=[ht], model_names=['HT'])
 ```
 
-More demonstrations available in the [demo](./demo) directory.
+More demonstrations available in the [demos](./demos) directory.
 
 # Development
 
