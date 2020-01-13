@@ -1,7 +1,7 @@
 from skmultiflow.evaluation.evaluate_stream_gen_speed import EvaluateStreamGenerationSpeed
 from automlstreams.streams import KafkaStream
 
-DEFAULT_INPUT_TOPIC = 'elec_4'
+DEFAULT_INPUT_TOPIC = 'sea_big'
 DEFAULT_BROKER = 'localhost:9092'
 
 

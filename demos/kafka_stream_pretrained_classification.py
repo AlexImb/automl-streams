@@ -34,7 +34,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
     evaluator = EvaluatePretrained(show_plot=True,
                                    n_wait=200,
                                    batch_size=10,
-                                   max_samples=3000)
+                                   max_samples=10000)
 
     evaluator.evaluate(stream=stream, model=models)
 

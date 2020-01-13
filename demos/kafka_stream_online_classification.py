@@ -7,7 +7,7 @@ from sklearn.linear_model import SGDClassifier, Perceptron
 
 from automlstreams.streams import KafkaStream
 
-DEFAULT_INPUT_TOPIC = 'elec_4'
+DEFAULT_INPUT_TOPIC = 'sea_big'
 DEFAULT_BROKER = 'localhost:9092'
 NO_TARGET_CLASSES = 2
 

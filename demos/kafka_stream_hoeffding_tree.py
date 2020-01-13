@@ -2,7 +2,7 @@ from skmultiflow.trees import HoeffdingTree
 from skmultiflow.evaluation import EvaluatePrequential
 from automlstreams.streams import KafkaStream
 
-DEFAULT_INPUT_TOPIC = 'elec_4'
+DEFAULT_INPUT_TOPIC = 'sea_big'
 DEFAULT_BROKER = 'localhost:9092'
 
 

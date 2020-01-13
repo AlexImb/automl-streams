@@ -1,31 +1,19 @@
 import numpy as np
-from pymfe.mfe import MFE
 from skmultiflow.core import BaseSKMObject, ClassifierMixin, MetaEstimatorMixin
 from skmultiflow.trees import HoeffdingTree as HT
 from sklearn.naive_bayes import MultinomialNB as MNB
-from sklearn.linear_model import SGDClassifier
 
 
-from sklearn.model_selection import train_test_split
-
-
-class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
-    """ Meta Classifier that uses meta-learning for selecting the best
-    base estimator for a certain window
-
+class LastBestClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
+    """ Classifier that keeps a set of base estimators in a leaderboard
+    and pick the estimator for the next window best on the prediction
+    accuracy of the estimator in the previous window.
 
     Parameters
     ----------
-    meta_estimator: skmultiflow.core.BaseSKMObject or sklearn.BaseEstimator
-        default=GradientBoostingRegressor
-        Metalearner used to predict the best base estimator.
-
-    base_estimators: list of skmultiflow.core.BaseSKMObject or sklearn.BaseEstimator
+    estimators: list of skmultiflow.core.BaseSKMObject or sklearn.BaseEstimator
         default=[DecisionTreeClassifier()]
-        A list of base estimators.
-
-    mfe_groups: list (default=['general', 'statistical', 'info-theory'])
-        Groups of meta-features to use from PyMFE
+        A list of estimators for the leaderboard
 
     window_size: int (default=100)
         The size of the window used for extracting meta-features.
@@ -40,16 +28,12 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
     """
 
     def __init__(self,
-                 meta_estimator=SGDClassifier(),
-                 base_estimators=[MNB(), HT()],
-                 mfe_groups=['general', 'statistical', 'info-theory'],
+                 estimators=[MNB(), HT()],
                  window_size=100,
                  active_learning=True):
 
-        self.meta_estimator = meta_estimator
-        self.base_estimators = base_estimators
+        self.estimators = estimators
         self.leader_index = 0
-        self.mfe_groups = mfe_groups
         self.window_size = window_size
         self.active_learning = active_learning
         self.w = 0
@@ -94,31 +78,17 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
             self.i += 1
 
             if self.i == self.window_size:
-                # Extract meta-features
-                mfe = MFE(self.mfe_groups, suppress_warnings=True).fit(self.X_window, self.y_window)
-                metafeatures = np.array([mfe.extract()[1]])
-                metafeatures[~np.isfinite(metafeatures)] = 0
-
-                # Select leader for predictions
+                # Train base estimators in a prequential way
                 if self.w > 0:
-                    predicted = self.meta_estimator.predict(metafeatures)
-                    self.leader_index = predicted[0]
+                    self.leader_index = self._get_leader_base_estimator_index(X, y)
 
-                # Train base estimators
-                X_window_train, X_window_test, y_window_train, y_window_test = train_test_split(X, y)
-                self._partial_fit_base_estimators(X_window_train, y_window_train, classes)
-                leader_index = self._get_leader_base_estimator_index(X_window_test, y_window_test)
-
-                # Train meta learner
-                metaclasses = [c for c in range(len(self.base_estimators))]
-                self.meta_estimator.partial_fit(metafeatures, [leader_index], metaclasses)
-
+                self._partial_fit_estimators(X, y, classes)
                 self.w += 1
                 self.i = -1
 
         return self
 
-    def _partial_fit_base_estimators(self, X, y, classes, sample_weight=None):
+    def _partial_fit_estimators(self, X, y, classes, sample_weight=None):
         """ Partially (incrementally) fit the base estimators.
 
         Parameters
@@ -141,27 +111,27 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
             self
 
         """
-        for index, base_estimator in enumerate(self.base_estimators):
+        for index, base_estimator in enumerate(self.estimators):
             try:
                 if self.active_learning is True:
-                    self.base_estimators[index] = base_estimator.partial_fit(X, y, classes, sample_weight)
+                    self.estimators[index] = base_estimator.partial_fit(X, y, classes, sample_weight)
                 else:
                     try:
-                        self.base_estimators[index] = base_estimator.fit(X, y, classes, sample_weight)
+                        self.estimators[index] = base_estimator.fit(X, y, classes, sample_weight)
                     except TypeError:
-                        self.base_estimators[index] = base_estimator.fit(X, y, sample_weight=sample_weight)
+                        self.estimators[index] = base_estimator.fit(X, y, sample_weight=sample_weight)
             except AttributeError:
                 try:
-                    self.base_estimators[index] = base_estimator.fit(X, y, classes, sample_weight)
+                    self.estimators[index] = base_estimator.fit(X, y, classes, sample_weight)
                 except TypeError:
-                    self.base_estimators[index] = base_estimator.fit(X, y, sample_weight=sample_weight)
+                    self.estimators[index] = base_estimator.fit(X, y, sample_weight=sample_weight)
 
     def _get_leader_base_estimator_index(self, X, y):
         try:
-            scores = [be.score(X, y) for be in self.base_estimators]
+            scores = [be.score(X, y) for be in self.estimators]
         except NotImplementedError:
             from sklearn.metrics import accuracy_score
-            scores = [accuracy_score(y, be.predict(X), normalize=False) for be in self.base_estimators]
+            scores = [accuracy_score(y, be.predict(X), normalize=False) for be in self.estimators]
 
         return scores.index(max(scores))
 
@@ -180,7 +150,7 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
         each of which represents the probability that the i-th sample of X belongs to a certain class-label.
 
         """
-        return self.base_estimators[self.leader_index].predict_proba(X)
+        return self.estimators[self.leader_index].predict_proba(X)
 
     def predict(self, X):
         """ Predict classes for the passed data.
@@ -195,7 +165,7 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
         A numpy.ndarray with all the predictions for the samples in X.
 
         """
-        return self.base_estimators[self.leader_index].predict(X)
+        return self.estimators[self.leader_index].predict(X)
 
     def reset(self):
         """ Resets the estimator to its initial state.
@@ -205,8 +175,7 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
             self
 
         """
-        self.meta_estimator = self.meta_estimator.reset()
-        self.base_estimators = [be.reset() for be in self.base_estimators]
+        self.estimators = [be.reset() for be in self.estimators]
         self.leader_index = 0
         self.w = 0
         self.i = -1
