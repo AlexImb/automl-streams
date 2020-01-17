@@ -1,0 +1,3 @@
+# Experiment main library
+auto-sklearn
+git+https://github.com/AlexImb/automl-streams
