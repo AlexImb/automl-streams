@@ -3,7 +3,12 @@ import pandas as pd
 import matplotlib.style as style
 style.use('seaborn-poster')
 
+SHOW_PLOT = False
+SAVE_FIG = True
+
+
 def plot_topics(demo, demo_type, topics):
+    plt.close()
     Y = pd.DataFrame()
 
     for topic in topics:
@@ -15,7 +20,11 @@ def plot_topics(demo, demo_type, topics):
 
     plt.plot(x, Y)
     plt.legend(topics)
-    plt.show()
+
+    if SAVE_FIG:
+        plt.savefig(f'{demo}/results/{demo_type}_all_topics.png')
+    if SHOW_PLOT:
+        plt.show()
 
 
 def get_path(demo, demo_type, topic):
@@ -23,6 +32,10 @@ def get_path(demo, demo_type, topic):
 
 
 if __name__ == "__main__":
+    demos = ['auto-sklearn', 'automl-streams']
+    demo_types = ['batch']
     topics = ['elec', 'covtype', 'weather', 'sea_big', 'moving_squares']
-    plot_topics('auto-sklearn', 'batch', topics)
 
+    for demo in demos:
+        for demo_type in demo_types:
+            plot_topics(demo, demo_type, topics)
