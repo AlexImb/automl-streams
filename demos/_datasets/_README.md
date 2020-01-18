@@ -1,7 +1,7 @@
 # Datasets descriptions
 
-Generated datasets: agrawal_gen, hyperplane_gen, led_gen, rbg_gen, sea_gen
-Real datasets: covtype, elec, higgs, pokerhand, weather
+Generated datasets: hyperplane_gen, led_gen, rbf_gen, sea_gen
+Real datasets: covtype, elec, pokerhand, weather
 Combination: CovPokElec
 
 

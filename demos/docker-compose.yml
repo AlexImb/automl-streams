@@ -5,6 +5,7 @@ services:
     image: auto-sklearn:latest
     volumes:
       - ./auto-sklearn:/home/jovyan/work
+      - ./_datasets:/_datasets
     working_dir: /home/jovyan/work
     ports:
       - 8887:8888
@@ -16,6 +17,7 @@ services:
     image: automl-streams:latest
     volumes:
       - ./automl-streams:/home/jovyan/work
+      - ./_datasets:/_datasets
     working_dir: /home/jovyan/work
     ports:
       - 8888:8888
@@ -27,6 +29,7 @@ services:
     image: h2o:latest
     volumes:
       - ./h2o:/home/jovyan/work
+      - ./_datasets:/_datasets
     working_dir: /home/jovyan/work
     ports:
       - 8889:8888
@@ -38,6 +41,7 @@ services:
     image: tpot:latest
     volumes:
       - ./tpot:/home/jovyan/work
+      - ./_datasets:/_datasets
     working_dir: /home/jovyan/work
     ports:
       - 8890:8888
