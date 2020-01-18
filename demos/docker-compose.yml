@@ -33,6 +33,17 @@ services:
     environment: 
       - JUPYTER_ENABLE_LAB=yes
   
+  tpot:
+    build: ./tpot/docker
+    image: tpot:latest
+    volumes:
+      - ./tpot:/home/jovyan/work
+    working_dir: /home/jovyan/work
+    ports:
+      - 8890:8888
+    environment: 
+      - JUPYTER_ENABLE_LAB=yes
+  
   # Kafka Cluster
   zookeeper:
     image: confluentinc/cp-zookeeper:5.3.1

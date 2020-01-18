@@ -32,7 +32,7 @@ def get_path(demo, demo_type, topic):
 
 
 if __name__ == "__main__":
-    demos = ['auto-sklearn', 'automl-streams']
+    demos = ['auto-sklearn', 'automl-streams', 'tpot']
     demo_types = ['batch']
     topics = ['elec', 'covtype', 'weather', 'sea_big', 'moving_squares']
 

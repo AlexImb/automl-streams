@@ -27,3 +27,9 @@ h2o:
 	docker-compose exec h2o python $(file)
 h2o-batch: 
 	docker-compose exec h2o python batch.py
+
+# TPOT
+tpot:
+	docker-compose exec tpot python $(file)
+tpot-batch: 
+	docker-compose exec tpot python batch.py
