@@ -45,8 +45,5 @@ if __name__ == "__main__":
         'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
         'covtype', 'elec', 'pokerhand', 'weather'
     ]
-    topics = [
-        'elec'
-    ]
     for topic in topics:
         run(topic)

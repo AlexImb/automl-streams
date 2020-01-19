@@ -21,15 +21,15 @@ def plot_topics(demo, demo_type, model, topics):
         df = pd.read_csv(path, comment='#')
         x = df[['id']]
         mean_acc = pd.concat([mean_acc, df[['mean_acc_[M0]']]], axis=1)
-        mean_kappa = pd.concat([mean_kappa, df[['mean_kappa_[M0]']]], axis=1)
-        current_acc = pd.concat([current_acc, df[['current_acc_[M0]']]], axis=1)
-        current_kappa = pd.concat([current_kappa, df[['current_kappa_[M0]']]], axis=1)
+        # mean_kappa = pd.concat([mean_kappa, df[['mean_kappa_[M0]']]], axis=1)
+        # current_acc = pd.concat([current_acc, df[['current_acc_[M0]']]], axis=1)
+        # current_kappa = pd.concat([current_kappa, df[['current_kappa_[M0]']]], axis=1)
 
     f, ax = plt.subplots(1)
     ax.plot(x, mean_acc)
-    ax.plot(x, mean_kappa)
-    ax.plot(x, current_acc)
-    ax.plot(x, current_kappa)
+    # ax.plot(x, mean_kappa)
+    # ax.plot(x, current_acc)
+    # ax.plot(x, current_kappa)
     ax.set_ylim(ymin=0, ymax=1)
     plt.legend(topics)
 
@@ -45,6 +45,8 @@ def get_path(demo, demo_type, model, topic):
 
 if __name__ == "__main__":
     demos = ['auto-sklearn', 'automl-streams', 'tpot']
+    demos = ['tpot']
+
     demo_types = ['batch', 'online', 'online_drift', 'meta']
     demo_types = ['batch']
 
@@ -53,13 +55,17 @@ if __name__ == "__main__":
         'covtype', 'elec', 'pokerhand', 'weather'
     ]
 
+    all_topics = [
+        'covtype', 'elec'
+    ]
+
     for demo in demos:
         for demo_type in demo_types:
-            if demo == 'automl-streams':
+            if demo == 'auto-sklearn':
                 if demo_type == 'batch':
                     topics = all_topics
                     models = ['AutoSklearnClassifier']
-            if demo == 'automl-streams':
+            elif demo == 'automl-streams':
                 if demo_type == 'batch':
                     topics = all_topics
                     models = ['GradientBoostingClassifier', 'KNeighborsClassifier', 'LogisticRegression', 'SGDClassifier']
@@ -76,5 +82,6 @@ if __name__ == "__main__":
                 if demo_type == 'batch':
                     topics = all_topics
                     models = ['TPOTClassifier']
+            
             for model in models:
                 plot_topics(demo, demo_type, model, topics)
