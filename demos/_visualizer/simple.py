@@ -45,11 +45,10 @@ def get_path(demo, demo_type, model, topic):
 
 if __name__ == "__main__":
     demos = ['auto-sklearn', 'automl-streams', 'tpot']
-    demos = demos[1:2]
-
     demo_types = ['batch', 'online', 'online_drift', 'meta']
+    demo_types = ['batch']
 
-    topics = [
+    all_topics = [
         'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
         'covtype', 'elec', 'pokerhand', 'weather'
     ]
@@ -58,11 +57,11 @@ if __name__ == "__main__":
         for demo_type in demo_types:
             if demo == 'automl-streams':
                 if demo_type == 'batch':
-                    topics = [
-                        'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
-                        'covtype', 'elec', 'pokerhand', 'weather'
-                    ]
-                    topics = ['elec']
+                    topics = all_topics
+                    models = ['AutoSklearnClassifier']
+            if demo == 'automl-streams':
+                if demo_type == 'batch':
+                    topics = all_topics
                     models = ['GradientBoostingClassifier', 'KNeighborsClassifier', 'LogisticRegression', 'SGDClassifier']
                 elif demo_type == 'online':
                     topics = ['elec']
@@ -73,5 +72,9 @@ if __name__ == "__main__":
                 elif demo_type == 'meta':
                     topics = ['elec', 'sea_gen']
                     models = ['MetaClassifier', 'LastBestClassifier']
+            elif demo_type == 'tpot':
+                if demo_type == 'batch':
+                    topics = all_topics
+                    models = ['TPOTClassifier']
             for model in models:
                 plot_topics(demo, demo_type, model, topics)

@@ -24,7 +24,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
     X, y = stream.next_sample(BATCH_SIZE)
     print('Sampled batch shape: ', X.shape)
 
-    model = TPOTClassifier(generations=5, population_size=20, max_time_mins=2, verbosity=2)
+    model = TPOTClassifier(generations=5, population_size=20, max_time_mins=3, verbosity=2)
 
     model.fit(X, y)
 
@@ -36,7 +36,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
                                    n_wait=200,
                                    batch_size=1,
                                    max_samples=MAX_SAMPLES,
-                                   output_file=f'results/batch_{topic}.csv')
+                                   output_file=f'results/batch.TPOTClassifier.{topic}.csv')
 
     evaluator.evaluate(stream=stream, model=model)
 

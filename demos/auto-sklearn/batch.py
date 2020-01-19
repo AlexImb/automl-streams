@@ -25,7 +25,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
     print('Sampled batch shape: ', X.shape)
 
     model = AutoSklearnClassifier(
-        time_left_for_this_task=120,
+        time_left_for_this_task=180,
         per_run_time_limit=30,
     )
 
@@ -35,7 +35,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
                                    n_wait=200,
                                    batch_size=1,
                                    max_samples=MAX_SAMPLES,
-                                   output_file=f'results/batch_{topic}.csv')
+                                   output_file=f'results/batch.AutoSklearnClassifier.{topic}.csv')
 
     evaluator.evaluate(stream=stream, model=model)
 
@@ -44,6 +44,9 @@ if __name__ == "__main__":
     topics = [
         'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
         'covtype', 'elec', 'pokerhand', 'weather'
+    ]
+    topics = [
+        'elec'
     ]
     for topic in topics:
         run(topic)

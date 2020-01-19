@@ -34,7 +34,7 @@ def run(topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
     y = H2OFrame(y)
     df = X.concat([y], axis=1)
 
-    model = H2OAutoML(max_runtime_secs=120, seed=1)
+    model = H2OAutoML(max_runtime_secs=180, seed=1)
     model.train(y=-1, training_frame=df)
 
     evaluator = EvaluatePretrained(show_plot=False,
