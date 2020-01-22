@@ -8,12 +8,10 @@ SAVE_FIG = True
 
 
 def plot_topics(demo, demo_type, model, topics):
-    plt.close()
     mean_acc = pd.DataFrame()
     mean_kappa = pd.DataFrame()
     current_acc = pd.DataFrame()
     current_kappa = pd.DataFrame()
-
 
     for topic in topics:
         print(topic)
@@ -21,23 +19,65 @@ def plot_topics(demo, demo_type, model, topics):
         df = pd.read_csv(path, comment='#')
         x = df[['id']]
         mean_acc = pd.concat([mean_acc, df[['mean_acc_[M0]']]], axis=1)
-        # mean_kappa = pd.concat([mean_kappa, df[['mean_kappa_[M0]']]], axis=1)
-        # current_acc = pd.concat([current_acc, df[['current_acc_[M0]']]], axis=1)
-        # current_kappa = pd.concat([current_kappa, df[['current_kappa_[M0]']]], axis=1)
+        mean_kappa = pd.concat([mean_kappa, df[['mean_kappa_[M0]']]], axis=1)
+        current_acc = pd.concat([current_acc, df[['current_acc_[M0]']]], axis=1)
+        current_kappa = pd.concat([current_kappa, df[['current_kappa_[M0]']]], axis=1)
 
-    f, ax = plt.subplots(1)
-    ax.plot(x, mean_acc)
+    plt.close()
+    plt.title(f'{model} Model Predictive Accuracy', pad=26)
+    plt.ylabel('Mean predictive accuracy')
+    plt.xlabel('Number of samples')
+    plt.plot(x, mean_acc)
     # ax.plot(x, mean_kappa)
     # ax.plot(x, current_acc)
     # ax.plot(x, current_kappa)
-    ax.set_ylim(ymin=0, ymax=1)
+    plt.ylim(ymax=1.05)
     plt.legend(topics)
+    plt.tight_layout()
 
     if SAVE_FIG:
-        plt.savefig(f'{demo}/results/figures/{demo_type}_{model}_all_topics.png')
+        plt.savefig(f'{demo}/results/figures/{demo_type}_{model}_{len(topics)}_topics.png')
     if SHOW_PLOT:
         plt.show()
 
+
+def plot_topics_grouped(demo, demo_type, models, topics):
+    plt.close()
+    f, subplots = plt.subplots(len(models))
+    f.set_size_inches(10, 30)
+    f.subplots_adjust(top=0.94, hspace=0.4)
+    f.suptitle('Online Models Predictive Accuracy', fontsize=26)
+
+    for index, subplot in enumerate(subplots):
+        mean_acc = pd.DataFrame()
+        mean_kappa = pd.DataFrame()
+        current_acc = pd.DataFrame()
+        current_kappa = pd.DataFrame()
+        for topic in topics:
+            print(topic)
+            path = get_path(demo, demo_type, models[index], topic)
+            df = pd.read_csv(path, comment='#')
+            x = df[['id']]
+            mean_acc = pd.concat([mean_acc, df[['mean_acc_[M0]']]], axis=1)
+            mean_kappa = pd.concat([mean_kappa, df[['mean_kappa_[M0]']]], axis=1)
+            current_acc = pd.concat([current_acc, df[['current_acc_[M0]']]], axis=1)
+            current_kappa = pd.concat([current_kappa, df[['current_kappa_[M0]']]], axis=1)
+
+        subplot.set_title(models[index])
+        subplot.set_ylabel('Mean accuracy')
+        if index == len(subplots) - 1:
+            subplot.set_xlabel('Number of samples')
+        subplot.plot(x, mean_acc)
+        # subplot.plot(x, mean_kappa)
+        # subplot.plot(x, current_acc)
+        # subplot.plot(x, current_kappa)
+        # subplot.set_ylim(ymax=1.05)
+
+    plt.legend(topics, loc='center', bbox_to_anchor=(0.5, -0.5), fancybox=True, shadow=True, ncol=3)
+    if SAVE_FIG:
+        plt.savefig(f'{demo}/results/figures/{demo_type}_all_models_all_topics.png')
+    if SHOW_PLOT:
+        plt.show()
 
 def get_path(demo, demo_type, model, topic):
     return f'{demo}/results/{demo_type}.{model}.{topic}.csv'
@@ -45,43 +85,44 @@ def get_path(demo, demo_type, model, topic):
 
 if __name__ == "__main__":
     demos = ['auto-sklearn', 'automl-streams', 'tpot']
-    demos = ['tpot']
+    demos = ['automl-streams']
 
-    demo_types = ['batch', 'online', 'online_drift', 'meta']
-    demo_types = ['batch']
+    demo_types = ['batch', 'online', 'meta']
+    demo_types = ['online']
 
-    all_topics = [
-        'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
-        'covtype', 'elec', 'pokerhand', 'weather'
+    topics = [
+        'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
+        'covtype', 'elec', 'pokerhand'
     ]
 
-    all_topics = [
-        'covtype', 'elec'
-    ]
+    # topics = [
+    #     'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'sea_gen',
+    #     'covtype', 'elec', 'pokerhand'
+    # ]
+
+    plot_grouped = True
 
     for demo in demos:
         for demo_type in demo_types:
             if demo == 'auto-sklearn':
                 if demo_type == 'batch':
-                    topics = all_topics
                     models = ['AutoSklearnClassifier']
             elif demo == 'automl-streams':
                 if demo_type == 'batch':
-                    topics = all_topics
-                    models = ['GradientBoostingClassifier', 'KNeighborsClassifier', 'LogisticRegression', 'SGDClassifier']
+                    models = ['RandomForestClassifier', 'DecisionTreeClassifier', 'KNeighborsClassifier', 'LinearSVC']
                 elif demo_type == 'online':
-                    topics = ['elec']
-                    models = ['HoeffdingTree', 'OzaBagging', 'LeverageBagging', 'SGDClassifier', 'NaiveBayes']
-                elif demo_type == 'online_drift':
-                    topics = ['elec']
-                    models = ['HAT', 'OzaBaggingAdwin']
+                    models = ['HoeffdingTree', 'KNN', 'PerceptronMask', 'SGDClassifier', 'HAT', 'LeverageBagging', 'OzaBaggingAdwin']
                 elif demo_type == 'meta':
                     topics = ['elec', 'sea_gen']
                     models = ['MetaClassifier', 'LastBestClassifier']
             elif demo_type == 'tpot':
                 if demo_type == 'batch':
-                    topics = all_topics
                     models = ['TPOTClassifier']
-            
-            for model in models:
-                plot_topics(demo, demo_type, model, topics)
+
+            if plot_grouped:
+                print('Plotting grouped', demo, demo_type, models, topics)
+                plot_topics_grouped(demo, demo_type, models, topics)
+            else:
+                for model in models:
+                    print('Plotting topics', demo, demo_type, model, topics)
+                    plot_topics(demo, demo_type, model, topics)

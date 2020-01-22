@@ -2,15 +2,18 @@ from skmultiflow.data import FileStream
 from automlstreams.streams import KafkaStream
 from skmultiflow.evaluation import EvaluatePrequential
 
-from skmultiflow.bayes import NaiveBayes
+from skmultiflow.lazy import KNN
 from skmultiflow.trees import HoeffdingTree
-from skmultiflow.meta import LeverageBagging, OzaBagging
+from skmultiflow.neural_networks import PerceptronMask
 from sklearn.linear_model import SGDClassifier
+from skmultiflow.trees import HAT
+from skmultiflow.meta import OzaBaggingAdwin
+from skmultiflow.meta import LeverageBagging
 
 USE_KAFKA = False
 DEFAULT_INPUT_TOPIC = 'sea_gen'
 DEFAULT_BROKER = 'broker:29092'
-MAX_SAMPLES = 10000
+MAX_SAMPLES = 20000
 
 
 def run(model=SGDClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
@@ -22,6 +25,8 @@ def run(model=SGDClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
         stream = FileStream(f'/_datasets/{topic}.csv')
 
     stream.prepare_for_use()
+    # Discard first 1k samples to discover classes
+    stream.next_sample(1000)
 
     model_name = model.__class__.__name__
     evaluator = EvaluatePrequential(show_plot=False,
@@ -35,17 +40,15 @@ def run(model=SGDClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
 
 
 if __name__ == "__main__":
-    topics = [
-        'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
-        'covtype', 'elec', 'pokerhand', 'weather'
-    ]
 
     topics = [
-        'elec', 'pokerhand'
+        'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
+        'covtype', 'elec', 'pokerhand'
     ]
 
-    models = [HoeffdingTree(), OzaBagging(), LeverageBagging(), SGDClassifier(), NaiveBayes()]
+    models = [HoeffdingTree(), KNN(), PerceptronMask(), SGDClassifier(), HAT(), LeverageBagging(), OzaBaggingAdwin()]
     print([m.__class__.__name__ for m in models])
     for topic in topics:
         for model in models:
+            print('\n', model.__class__.__name__, topic, ':\n')
             run(model, topic)

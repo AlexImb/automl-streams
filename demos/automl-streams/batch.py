@@ -1,18 +1,19 @@
 from skmultiflow.data import FileStream
 from automlstreams.streams import KafkaStream
 from automlstreams.evaluators import EvaluatePretrained
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.svm import LinearSVC
 
 USE_KAFKA = False
 DEFAULT_INPUT_TOPIC = 'sea_gen'
 DEFAULT_BROKER = 'broker:29092'
-BATCH_SIZE = 5000
+BATCH_SIZE = 8000
 MAX_SAMPLES = 10000
 
 
-def run(model=GradientBoostingClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
+def run(model=RandomForestClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
     if USE_KAFKA:
         print(f'Running demo for topic={topic} and broker={broker}')
         stream = KafkaStream(topic, bootstrap_servers=broker)
@@ -40,11 +41,11 @@ def run(model=GradientBoostingClassifier(), topic=DEFAULT_INPUT_TOPIC, broker=DE
 
 if __name__ == "__main__":
     topics = [
-        'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
-        'covtype', 'elec', 'pokerhand', 'weather'
+        'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
+        'covtype', 'elec', 'pokerhand'
     ]
 
-    models = [GradientBoostingClassifier(), KNeighborsClassifier(), LogisticRegression(), SGDClassifier()]
+    models = [RandomForestClassifier(), DecisionTreeClassifier(), KNeighborsClassifier(), LinearSVC()]
     print([m.__class__.__name__ for m in models])
     for topic in topics:
         for model in models:
