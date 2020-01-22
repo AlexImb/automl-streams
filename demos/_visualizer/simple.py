@@ -31,7 +31,7 @@ def plot_topics(demo, demo_type, model, topics):
     # ax.plot(x, mean_kappa)
     # ax.plot(x, current_acc)
     # ax.plot(x, current_kappa)
-    plt.ylim(ymax=1.05)
+    plt.ylim(ymin=0.45, ymax=1.05)
     plt.legend(topics)
     plt.tight_layout()
 
@@ -44,9 +44,9 @@ def plot_topics(demo, demo_type, model, topics):
 def plot_topics_grouped(demo, demo_type, models, topics):
     plt.close()
     f, subplots = plt.subplots(len(models))
-    f.set_size_inches(10, 30)
+    f.set_size_inches(10, 20)
     f.subplots_adjust(top=0.94, hspace=0.4)
-    f.suptitle('Online Models Predictive Accuracy', fontsize=26)
+    f.suptitle('Models Predictive Accuracy', fontsize=26)
 
     for index, subplot in enumerate(subplots):
         mean_acc = pd.DataFrame()
@@ -74,6 +74,7 @@ def plot_topics_grouped(demo, demo_type, models, topics):
         # subplot.set_ylim(ymax=1.05)
 
     plt.legend(topics, loc='center', bbox_to_anchor=(0.5, -0.5), fancybox=True, shadow=True, ncol=3)
+    
     if SAVE_FIG:
         plt.savefig(f'{demo}/results/figures/{demo_type}_all_models_all_topics.png')
     if SHOW_PLOT:
@@ -85,10 +86,10 @@ def get_path(demo, demo_type, model, topic):
 
 if __name__ == "__main__":
     demos = ['auto-sklearn', 'automl-streams', 'tpot']
-    demos = ['automl-streams']
+    demos = ['tpot']
 
     demo_types = ['batch', 'online', 'meta']
-    demo_types = ['online']
+    demo_types = ['batch']
 
     topics = [
         'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     #     'covtype', 'elec', 'pokerhand'
     # ]
 
-    plot_grouped = True
+    plot_grouped = False
 
     for demo in demos:
         for demo_type in demo_types:
@@ -115,9 +116,10 @@ if __name__ == "__main__":
                 elif demo_type == 'meta':
                     topics = ['elec', 'sea_gen']
                     models = ['MetaClassifier', 'LastBestClassifier']
-            elif demo_type == 'tpot':
+            elif demo == 'tpot':
                 if demo_type == 'batch':
                     models = ['TPOTClassifier']
+                    # models = ['TPOTClassifier', 'AutoSklearnClassifier']
 
             if plot_grouped:
                 print('Plotting grouped', demo, demo_type, models, topics)

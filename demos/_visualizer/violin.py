@@ -24,8 +24,10 @@ def plot_violins(demo, demo_type, models, topics):
 
     plt.violinplot(model_metrics, showmeans=True, showmedians=True)
     plt.ylim(0, 1)
+    plt.gca().grid(which='both', axis='y', linestyle='dotted')
     plt.xticks(np.arange(1, len(models) + 1), models, rotation=10)
-    plt.title('Online Models Accuracy (Dataset-averaged)', pad=26)
+    # plt.title('AutoML Models Accuracy (Dataset-averaged)', pad=26)
+    plt.title(f'{demo_type.title()} Models Accuracy (Dataset-averaged)', pad=26)
     plt.tight_layout()
 
     if SAVE_FIG:
@@ -43,7 +45,7 @@ if __name__ == "__main__":
     demos = ['automl-streams']
 
     demo_types = ['batch', 'online', 'meta']
-    demo_types = ['online']
+    demo_types = ['batch', 'online']
 
     topics = [
         'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
@@ -62,9 +64,10 @@ if __name__ == "__main__":
                     models = ['HoeffdingTree', 'KNN', 'PerceptronMask', 'SGDClassifier', 'HAT', 'LeverageBagging', 'OzaBaggingAdwin']
                 elif demo_type == 'meta':
                     models = ['MetaClassifier', 'LastBestClassifier']
-            elif demo_type == 'tpot':
+            elif demo == 'tpot':
                 if demo_type == 'batch':
                     models = ['TPOTClassifier']
+                    # models = ['TPOTClassifier', 'AutoSklearnClassifier']
 
             print('Plotting violins', demo, demo_type, models, topics)
             plot_violins(demo, demo_type, models, topics)

@@ -1,0 +1,5 @@
+# TEST CONFIGURATION BEGIN
+# FileStream(filename='agrawal_gen.csv', target_idx=-1, n_targets=1, cat_features=None)
+# EvaluatePretrained(batch_size=100, data_points_for_classification=False, max_samples=10000, max_time=inf, metrics=['accuracy', 'kappa'], n_wait=200, output_file='batch_agrawal_gen.csv', restart_stream=True, show_plot=False)
+# TEST CONFIGURATION END
+id,mean_acc_[M0],current_acc_[M0],mean_kappa_[M0],current_kappa_[M0]
