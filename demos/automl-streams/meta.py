@@ -8,7 +8,7 @@ from skmultiflow.trees import HoeffdingTree
 USE_KAFKA = False
 DEFAULT_INPUT_TOPIC = 'sea_gen'
 DEFAULT_BROKER = 'broker:29092'
-MAX_SAMPLES = 10000
+MAX_SAMPLES = 20000
 
 
 def run(model=HoeffdingTree(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER):
@@ -17,7 +17,8 @@ def run(model=HoeffdingTree(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
         stream = KafkaStream(topic, bootstrap_servers=broker)
     else:
         print(f'Running demo for file=/_datasets/{topic}.csv')
-        stream = FileStream(f'/_datasets/{topic}.csv')
+        # stream = FileStream(f'/_datasets/{topic}.csv')
+        stream = FileStream(f'_datasets/{topic}.csv')
 
     stream.prepare_for_use()
 
@@ -25,17 +26,26 @@ def run(model=HoeffdingTree(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
     evaluator = EvaluatePrequential(show_plot=False,
                                     n_wait=200,
                                     batch_size=1,
-                                    pretrain_size=1000,
+                                    pretrain_size=200,
                                     max_samples=MAX_SAMPLES,
                                     output_file=f'results/meta.{model_name}.{topic}.csv')
+
+    # evaluator = EvaluatePrequential(show_plot=True,
+    #                                 n_wait=200,
+    #                                 batch_size=1,
+    #                                 pretrain_size=200,
+    #                                 max_samples=MAX_SAMPLES)
 
     evaluator.evaluate(stream=stream, model=model)
 
 
 if __name__ == "__main__":
     topics = [
-        'sea_gen'
+        'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
+        'covtype', 'elec', 'pokerhand'
     ]
+
+    # topics = ['elec']
 
     models = [
         MetaClassifier(),
