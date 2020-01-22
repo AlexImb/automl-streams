@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from pymfe.mfe import MFE
 from skmultiflow.core import BaseSKMObject, ClassifierMixin, MetaEstimatorMixin
@@ -45,11 +46,11 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
                  meta_estimator=SGDClassifier(),
                  base_estimators=[HoeffdingTree(), KNN(), PerceptronMask(), SGDClassifier()],
                  mfe_groups=['general', 'statistical', 'info-theory'],
-                 window_size=100,
+                 window_size=300,
                  active_learning=True):
 
-        self.meta_estimator = meta_estimator
-        self.base_estimators = base_estimators
+        self.meta_estimator = meta_estimator.__class__()
+        self.base_estimators = [e.__class__() for e in base_estimators]
         self.leader_index = 0
         self.mfe_groups = mfe_groups
         self.window_size = window_size
@@ -59,6 +60,9 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
 
         self.X_window = None
         self.y_window = None
+
+        warnings.filterwarnings("ignore", ".*Can't summarize feature*")
+        warnings.filterwarnings("ignore", ".*It is not possible*")
 
     def partial_fit(self, X, y=None, classes=None, sample_weight=None):
         """ Partially (incrementally) fit the model.

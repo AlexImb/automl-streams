@@ -1,7 +1,9 @@
 import numpy as np
 from skmultiflow.core import BaseSKMObject, ClassifierMixin, MetaEstimatorMixin
-from skmultiflow.trees import HoeffdingTree as HT
-from sklearn.naive_bayes import MultinomialNB as MNB
+from skmultiflow.lazy import KNN
+from skmultiflow.trees import HoeffdingTree
+from skmultiflow.neural_networks import PerceptronMask
+from sklearn.linear_model import SGDClassifier
 
 
 class LastBestClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
@@ -28,11 +30,11 @@ class LastBestClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
     """
 
     def __init__(self,
-                 estimators=[MNB(), HT()],
-                 window_size=100,
+                 estimators=[HoeffdingTree(), KNN(), PerceptronMask(), SGDClassifier()],
+                 window_size=300,
                  active_learning=True):
 
-        self.estimators = estimators
+        self.estimators = [e.__class__() for e in estimators]
         self.leader_index = 0
         self.window_size = window_size
         self.active_learning = active_learning
