@@ -21,7 +21,7 @@ def plot_violins(demo, demo_type, models, topics):
             mean_topic = current_metric_topic.mean()
             topic_metrics = pd.concat([topic_metrics, mean_topic])
         model_metrics.append(topic_metrics.values)
-
+    
     plt.violinplot(model_metrics, showmeans=True, showmedians=True)
     plt.ylim(0, 1)
     plt.gca().grid(which='both', axis='y', linestyle='dotted')
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     demos = ['automl-streams']
 
     demo_types = ['batch', 'online', 'meta']
-    demo_types = ['batch', 'online']
+    demo_types = ['meta']
 
     topics = [
         'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',

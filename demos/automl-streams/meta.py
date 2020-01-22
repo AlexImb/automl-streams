@@ -23,18 +23,19 @@ def run(model=HoeffdingTree(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
     stream.prepare_for_use()
 
     model_name = model.__class__.__name__
+    # evaluator = EvaluatePrequential(show_plot=False,
+    #                                 n_wait=200,
+    #                                 batch_size=50,
+    #                                 pretrain_size=200,
+    #                                 max_samples=MAX_SAMPLES,
+    #                                 output_file=f'results/meta.{model_name}.{topic}.csv')
+
     evaluator = EvaluatePrequential(show_plot=False,
                                     n_wait=200,
-                                    batch_size=1,
-                                    pretrain_size=200,
+                                    batch_size=200,
+                                    pretrain_size=500,
                                     max_samples=MAX_SAMPLES,
-                                    output_file=f'results/meta.{model_name}.{topic}.csv')
-
-    # evaluator = EvaluatePrequential(show_plot=True,
-    #                                 n_wait=200,
-    #                                 batch_size=1,
-    #                                 pretrain_size=200,
-    #                                 max_samples=MAX_SAMPLES)
+                                    output_file=f'automl-streams/results/meta.{model_name}.{topic}.csv')
 
     evaluator.evaluate(stream=stream, model=model)
 
@@ -45,13 +46,12 @@ if __name__ == "__main__":
         'covtype', 'elec', 'pokerhand'
     ]
 
-    # topics = ['elec']
-
     models = [
-        MetaClassifier(),
-        LastBestClassifier()
+        # MetaClassifier,
+        LastBestClassifier
     ]
-    print([m.__class__.__name__ for m in models])
+    print([m.__name__ for m in models])
     for topic in topics:
         for model in models:
-            run(model, topic)
+            print('\n', model.__name__, topic, ':\n')
+            run(model(), topic)

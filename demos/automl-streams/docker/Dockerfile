@@ -8,4 +8,4 @@ USER $NB_USER
 
 # Install the reqirements from the build context
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir 

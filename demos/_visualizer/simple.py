@@ -85,25 +85,24 @@ def get_path(demo, demo_type, model, topic):
 
 
 if __name__ == "__main__":
-    demos = ['auto-sklearn', 'automl-streams', 'tpot']
-    demos = ['tpot']
-
-    demo_types = ['batch', 'online', 'meta']
+    demos = ['auto-sklearn', 'tpot', 'automl-streams']
     demo_types = ['batch']
-
     topics = [
         'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'led_gen', 'rbf_gen', 'sea_gen',
         'covtype', 'elec', 'pokerhand'
     ]
 
-    # topics = [
-    #     'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'sea_gen',
-    #     'covtype', 'elec', 'pokerhand'
-    # ]
+    topics = [
+        'agrawal_gen', 'stagger_gen', 'hyperplane_gen', 'sea_gen',
+        'covtype', 'elec', 'pokerhand'
+    ]
 
     plot_grouped = False
 
     for demo in demos:
+        if demo == 'automl-streams':
+            demo_types.extend(['online', 'meta'])
+
         for demo_type in demo_types:
             if demo == 'auto-sklearn':
                 if demo_type == 'batch':
@@ -114,7 +113,6 @@ if __name__ == "__main__":
                 elif demo_type == 'online':
                     models = ['HoeffdingTree', 'KNN', 'PerceptronMask', 'SGDClassifier', 'HAT', 'LeverageBagging', 'OzaBaggingAdwin']
                 elif demo_type == 'meta':
-                    topics = ['elec', 'sea_gen']
                     models = ['MetaClassifier', 'LastBestClassifier']
             elif demo == 'tpot':
                 if demo_type == 'batch':

@@ -46,9 +46,9 @@ if __name__ == "__main__":
         'covtype', 'elec', 'pokerhand'
     ]
 
-    models = [HoeffdingTree(), KNN(), PerceptronMask(), SGDClassifier(), HAT(), LeverageBagging(), OzaBaggingAdwin()]
-    print([m.__class__.__name__ for m in models])
+    models = [HoeffdingTree, KNN, PerceptronMask, SGDClassifier, HAT, LeverageBagging, OzaBaggingAdwin]
+    print([m.__name__ for m in models])
     for topic in topics:
         for model in models:
-            print('\n', model.__class__.__name__, topic, ':\n')
-            run(model, topic)
+            print('\n', model.__name__, topic, ':\n')
+            run(model(), topic)

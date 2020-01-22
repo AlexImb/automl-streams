@@ -45,8 +45,9 @@ if __name__ == "__main__":
         'covtype', 'elec', 'pokerhand'
     ]
 
-    models = [RandomForestClassifier(), DecisionTreeClassifier(), KNeighborsClassifier(), LinearSVC()]
-    print([m.__class__.__name__ for m in models])
+    models = [RandomForestClassifier, DecisionTreeClassifier, KNeighborsClassifier, LinearSVC]
+    print([m.__name__ for m in models])
     for topic in topics:
         for model in models:
-            run(model, topic)
+            print('\n', model.__name__, topic, ':\n')
+            run(model(), topic)
