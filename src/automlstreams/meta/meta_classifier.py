@@ -1,8 +1,10 @@
 import numpy as np
 from pymfe.mfe import MFE
 from skmultiflow.core import BaseSKMObject, ClassifierMixin, MetaEstimatorMixin
-from skmultiflow.trees import HoeffdingTree as HT
-from sklearn.naive_bayes import MultinomialNB as MNB
+
+from skmultiflow.lazy import KNN
+from skmultiflow.trees import HoeffdingTree
+from skmultiflow.neural_networks import PerceptronMask
 from sklearn.linear_model import SGDClassifier
 
 
@@ -41,7 +43,7 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
 
     def __init__(self,
                  meta_estimator=SGDClassifier(),
-                 base_estimators=[MNB(), HT()],
+                 base_estimators=[HoeffdingTree(), KNN(), PerceptronMask(), SGDClassifier()],
                  mfe_groups=['general', 'statistical', 'info-theory'],
                  window_size=100,
                  active_learning=True):
@@ -105,7 +107,7 @@ class MetaClassifier(BaseSKMObject, ClassifierMixin, MetaEstimatorMixin):
                     self.leader_index = predicted[0]
 
                 # Train base estimators
-                X_window_train, X_window_test, y_window_train, y_window_test = train_test_split(X, y)
+                X_window_train, X_window_test, y_window_train, y_window_test = train_test_split(self.X_window, self.y_window)
                 self._partial_fit_base_estimators(X_window_train, y_window_train, classes)
                 leader_index = self._get_leader_base_estimator_index(X_window_test, y_window_test)
 
