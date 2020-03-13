@@ -17,25 +17,17 @@ def run(model=HoeffdingTree(), topic=DEFAULT_INPUT_TOPIC, broker=DEFAULT_BROKER)
         stream = KafkaStream(topic, bootstrap_servers=broker)
     else:
         print(f'Running demo for file=/_datasets/{topic}.csv')
-        # stream = FileStream(f'/_datasets/{topic}.csv')
-        stream = FileStream(f'_datasets/{topic}.csv')
+        stream = FileStream(f'/_datasets/{topic}.csv')
 
     stream.prepare_for_use()
 
     model_name = model.__class__.__name__
-    # evaluator = EvaluatePrequential(show_plot=False,
-    #                                 n_wait=200,
-    #                                 batch_size=50,
-    #                                 pretrain_size=200,
-    #                                 max_samples=MAX_SAMPLES,
-    #                                 output_file=f'results/meta.{model_name}.{topic}.csv')
-
     evaluator = EvaluatePrequential(show_plot=False,
                                     n_wait=200,
-                                    batch_size=200,
-                                    pretrain_size=500,
+                                    batch_size=50,
+                                    pretrain_size=200,
                                     max_samples=MAX_SAMPLES,
-                                    output_file=f'automl-streams/results/meta.{model_name}.{topic}.csv')
+                                    output_file=f'results/meta.{model_name}.{topic}.csv')
 
     evaluator.evaluate(stream=stream, model=model)
 
@@ -47,7 +39,7 @@ if __name__ == "__main__":
     ]
 
     models = [
-        # MetaClassifier,
+        MetaClassifier,
         LastBestClassifier
     ]
     print([m.__name__ for m in models])
