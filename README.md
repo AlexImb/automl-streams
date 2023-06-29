@@ -58,5 +58,23 @@ $ python setup.py develop
 ```
 
 
+# Paper
 
+https://arxiv.org/abs/2106.07317
+
+```bibtex
+@article{DBLP:journals/corr/abs-2106-07317,
+  author       = {Alexandru{-}Ionut Imbrea},
+  title        = {Automated Machine Learning Techniques for Data Streams},
+  journal      = {CoRR},
+  volume       = {abs/2106.07317},
+  year         = {2021},
+  url          = {https://arxiv.org/abs/2106.07317},
+  eprinttype    = {arXiv},
+  eprint       = {2106.07317},
+  timestamp    = {Wed, 16 Jun 2021 10:42:19 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2106-07317.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
